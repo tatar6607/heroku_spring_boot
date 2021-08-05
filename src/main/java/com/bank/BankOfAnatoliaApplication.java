@@ -26,13 +26,13 @@ class DemoCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Role roleAdmin = new Role();
-        roleAdmin.setName("ROLE_ADMIN");
-        roleRepo.save(roleAdmin);
-
-        Role roleUser = new Role();
-        roleUser.setName("ROLE_USER");
-        roleRepo.save(roleUser);
+//        Role roleAdmin = new Role();
+//        roleAdmin.setName("ROLE_ADMIN");
+//        roleRepo.save(roleAdmin);
+//
+//        Role roleUser = new Role();
+//        roleUser.setName("ROLE_USER");
+//        roleRepo.save(roleUser);
 
 
 //		if(roleRepo.findByName("ROLE_ADMIN").isEmpty()) {
