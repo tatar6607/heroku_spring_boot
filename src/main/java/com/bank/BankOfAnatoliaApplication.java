@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 @SpringBootApplication
 public class BankOfAnatoliaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BankOfAnatoliaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BankOfAnatoliaApplication.class, args);
+    }
 
 }
 
@@ -21,21 +21,31 @@ public class BankOfAnatoliaApplication {
 @Component
 class DemoCommandLineRunner implements CommandLineRunner {
 
-	@Autowired
-	private RoleRepo roleRepo;
+    @Autowired
+    private RoleRepo roleRepo;
 
-	@Override
-	public void run(String... args) throws Exception {
-		if(roleRepo.findByName("ROLE_ADMIN").isEmpty()) {
-			Role roleAdmin = new Role();
-			roleAdmin.setName("ROLE_ADMIN");
-			roleRepo.save(roleAdmin);
-		}
+    @Override
+    public void run(String... args) throws Exception {
+        Role roleAdmin = new Role();
+        roleAdmin.setName("ROLE_ADMIN");
+        roleRepo.save(roleAdmin);
 
-		if(roleRepo.findByName("ROLE_USER").isEmpty()) {
-			Role roleUser = new Role();
-			roleUser.setName("ROLE_USER");
-			roleRepo.save(roleUser);
-		}
-	}
+        Role roleUser = new Role();
+        roleUser.setName("ROLE_USER");
+        roleRepo.save(roleUser);
+
+
+//		if(roleRepo.findByName("ROLE_ADMIN").isEmpty()) {
+//			Role roleAdmin = new Role();
+//			roleAdmin.setName("ROLE_ADMIN");
+//			roleRepo.save(roleAdmin);
+//		}
+//
+//		if(roleRepo.findByName("ROLE_USER").isEmpty()) {
+//			Role roleUser = new Role();
+//			roleUser.setName("ROLE_USER");
+//			roleRepo.save(roleUser);
+//		}
+
+    }
 }
