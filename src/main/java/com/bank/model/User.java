@@ -18,7 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-
+@Table(name = "user", schema = "public")
 public class User implements UserDetails {
 
     @Id

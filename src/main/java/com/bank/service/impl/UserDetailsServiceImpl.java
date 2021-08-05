@@ -18,6 +18,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,10 +36,15 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     @Autowired
     TransactionService transactionService;
 
+    @Autowired
+    AccountRepo accountRepo;
+
 
     @Override
     public UserDAO getUserDAO(User user) {
         UserDAO userDAO = new UserDAO();
+        List<TransactionDAO> transactions = null;
+
         userDAO.setUserId(user.getUserId());
         userDAO.setUsername(user.getUsername());
         userDAO.setPassword(user.getPassword());
@@ -42,20 +53,44 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
         userDAO.setEmail(user.getEmail());
         Boolean isAdmin = user.getUserRoles().stream().filter(role -> role.getRole().getName().equals("ROLE_ADMIN")).findAny().isPresent();
         userDAO.setIsAdmin(isAdmin);
-        if(user.getAccount() != null) {
-            userDAO.setAccountNumber(user.getAccount().getAccountNumber());
-            userDAO.setAccountBalance(user.getAccount().getAccountBalance());
-        }
-        assert user.getAccount() != null;
+
+        // admin  ayarlari
+        if (isAdmin) {
+            List<TransactionDAO> transactionAll = transactionService.getAll().stream().map(this::getTransactionDAO).collect(Collectors.toList());
+            userDAO.setTransactions(transactionAll);
+
+            userDAO.setTotalUsers(userRepo.count());
+
+            List<Account> accounts = (List<Account>) accountRepo.findAll();
+            Double totalBalance = accounts.stream().mapToDouble(acc -> acc.getAccountNumber().doubleValue()).sum();
+            userDAO.setTotalBalance(totalBalance);
+
+        } else {
+            if (user.getAccount() != null) {
+                userDAO.setAccountNumber(user.getAccount().getAccountNumber());
+                userDAO.setAccountBalance(user.getAccount().getAccountBalance());
+            }
+            assert user.getAccount() != null;
 //      List<TransactionDAO> transactions = user.getAccount().getTransactions().stream().map(this::getTransactionDAO).collect(Collectors.toList());
 
+            List<Transaction> actualTransactionList = transactionService.getAllTransaction(user.getAccount().getId());
+            transactions = actualTransactionList.stream().map(this::getTransactionDAO).collect(Collectors.toList());
+            userDAO.setTransactions(transactions);
 
-        List<Transaction> actualTransactionList  = transactionService.getAllTransaction(user.getAccount().getId());
-        List<TransactionDAO> transactions = actualTransactionList.stream().map(this::getTransactionDAO).collect(Collectors.toList());
-        userDAO.setTransactions(transactions);
+            List<RecipientDAO> recipients = user.getRecipient().stream().map(this::getRecipientDAO).collect(Collectors.toList());
+            userDAO.setRecipients(recipients);
 
-        List<RecipientDAO> recipients = user.getRecipient().stream().map(this::getRecipientDAO).collect(Collectors.toList());
-        userDAO.setRecipients(recipients);
+        }
+
+
+        // haftalik veriler
+        if(transactions != null) {
+            Date sevenDaysAgo = DateUtil.convertToDate(LocalDate.now().minusDays(7));
+            List<TransactionDAO> filtered = transactions.stream().filter(t -> DateUtil.getDateFromString(t.getDate(), DateUtil.SIMPLE_DATE_FORMAT).before(new Date()) &&
+                    DateUtil.getDateFromString(t.getDate(), DateUtil.SIMPLE_DATE_FORMAT).after(sevenDaysAgo)).
+                    collect(Collectors.toList());
+            userDAO.setOneWeekTransactions(filtered);
+        }
 
         return userDAO;
     }
@@ -100,15 +135,15 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     @Override
     public UserDAO getUserDAOByUsername(String username) {
 //        User user = userRepo.findByUsername(username).orElseThrow(()-> new UsernameNotFoundException("Error: user not found. " + username));
-       Optional<User> user = userRepo.findByUsername(username);
-       UserDAO userDAO =  null;
-       if(user.isPresent()) {
-           userDAO = getUserDAO(user.get());
-       }
-       return userDAO;
+        Optional<User> user = userRepo.findByUsername(username);
+        UserDAO userDAO = null;
+        if (user.isPresent()) {
+            userDAO = getUserDAO(user.get());
+        }
+        return userDAO;
     }
 
-    // bu kisim isAdmin olmadan yapildi
+
     @Override
     public List<UserDAO> getAllUsers() {
         List<User> users = (List<User>) userRepo.findAll();
@@ -119,13 +154,18 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
     @Override
     public List<RecipientDAO> getRecipients(String username) {
         List<RecipientDAO> recipients = null;
-        Optional <User> userOptional = userRepo.findByUsername(username);
-        if(userOptional.isPresent()){
+        Optional<User> userOptional = userRepo.findByUsername(username);
+        if (userOptional.isPresent()) {
             User user = userOptional.get();
             recipients = user.getRecipient().stream().map(this::getRecipientDAO).
                     collect(Collectors.toList());
         }
         return recipients;
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userRepo.deleteById(id);
     }
 
     @Override
@@ -136,4 +176,6 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserService {
 
         return user;
     }
+
+
 }

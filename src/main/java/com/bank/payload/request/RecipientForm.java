@@ -16,13 +16,16 @@ public class RecipientForm {
     @Email
     private String email;
 
-    @NotNull
-    private Integer phone;
+    @NotBlank
+    private String phone;
 
     @NotBlank @Size(min = 3, max = 60)
     private String bankName;
 
     @NotBlank @Size(min = 16, max = 16)
     private String bankNumber;
+
+
+
 
 }

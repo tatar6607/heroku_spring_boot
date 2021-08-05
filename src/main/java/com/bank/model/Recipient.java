@@ -18,11 +18,11 @@ public class Recipient {
 
     private String name;
     private String email;
-    private Integer phone;
+    private String phone;
     private String bankName;
     private String bankNumber;
 
-    public Recipient(String name, String email, Integer phone, String bankName, String bankNumber) {
+    public Recipient(String name, String email, String phone, String bankName, String bankNumber) {
         this.name = name;
         this.email = email;
         this.phone = phone;

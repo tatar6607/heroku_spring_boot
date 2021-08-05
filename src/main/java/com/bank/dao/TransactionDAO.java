@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,5 +19,7 @@ public class TransactionDAO {
     private Double amount;
     private BigDecimal availableBalance;
     private Boolean isTransfer;
+
+
 
 }

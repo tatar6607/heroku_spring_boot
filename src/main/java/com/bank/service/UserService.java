@@ -12,4 +12,5 @@ public interface UserService {
     UserDAO getUserDAOByUsername(String username);
     List<UserDAO> getAllUsers();
     List<RecipientDAO> getRecipients(String username);
+    void deleteUser(Long id);
 }

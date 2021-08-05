@@ -1,5 +1,7 @@
 package com.bank.model;
 
+import com.bank.dao.RecipientDAO;
+import com.bank.dao.TransactionDAO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -37,8 +40,5 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
-
-
-
 
 }

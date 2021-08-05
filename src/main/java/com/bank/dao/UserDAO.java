@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class UserDAO {
     private List<TransactionDAO> transactions;
     private List<RecipientDAO> recipients;
 
+    private List<TransactionDAO> oneWeekTransactions;
+    private List<RecipientDAO> oneWeekRecipients;
 
-
+    private Long totalUsers;
+    private Double totalBalance;
 }

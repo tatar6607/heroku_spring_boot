@@ -47,7 +47,7 @@ public class JwtUtils {
         Calendar issuedCalendar = Calendar.getInstance();
         Calendar expiredCalendar = Calendar.getInstance();
         expiredCalendar.setTime(issuedCalendar.getTime());
-        expiredCalendar.add(Calendar.HOUR, 2);
+        expiredCalendar.add(Calendar.HOUR, 12);
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(issuedCalendar.getTime())
                 .setExpiration(expiredCalendar.getTime())

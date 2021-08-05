@@ -11,12 +11,16 @@ import java.util.List;
 
 
 public interface TransactionRepo extends CrudRepository<Transaction, Long> {
-    @Query("select tr from Transaction tr where tr.account.id= :accountId and tr.date >= :date order by tr.date")
+    @Query("select tr from Transaction tr where tr.account.id= :accountId and tr.date >= :date  order by tr.date")
     List<Transaction> getTransactionByAccountAndDate(@Param("accountId") Long accountId, @Param("date") Date date);
 
     @Query("select tr from Transaction tr where tr.date >= :date order by tr.date")
     List<Transaction> getTransactionByDate(@Param("date") Date date);
 
     List<Transaction> getAllByAccount_Id(Long accountId);
+
+    List<Transaction> getTransactionsByDateIsBetweenAndAccount_Id(Date start, Date end, Long account_id);
+
+
 
 }

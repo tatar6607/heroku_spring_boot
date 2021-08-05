@@ -6,10 +6,8 @@ import com.bank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,11 +20,19 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/all")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponse> getAllUsers() {
         UserResponse response = new UserResponse();
         List<UserDAO> users = userService.getAllUsers();
         response.setUsers(users);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable String id) {
+        userService.deleteUser(Long.parseLong(id));
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 }
 
